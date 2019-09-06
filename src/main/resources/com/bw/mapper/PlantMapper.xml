@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 对应的是接口的全名 -->
+<mapper namespace="com.bw.dao.MyDao">
+	<select id="list" resultType="map" parameterType="map">
+	select b.id,b.name,b.ms,t.tname from botany b
+	LEFT JOIN type t on t.tid=b.tid
+	<where>
+	<if test="name !=null and name !=''">
+	and b.name like concat('%',#{name},'%')
+	</if>
+	</where>
+	</select>
+	<!-- 首先进行删除中间表 -->
+	<delete id="delete" parameterType="string">
+	delete from zhong where did in(${value})
+	</delete>
+	<!-- 然后进行删除另一个表的数据 -->
+	<delete id="deletes" parameterType="string">
+	delete from dianying  where did in(${value})
+	</delete>
+
+	<!-- 下拉框 -->
+	<select id="xia" resultType="type">
+	select *from type
+	</select>
+	<!-- 添加 -->
+	<insert id="add" parameterType="botany">
+	insert into botany(name,ms,tid) values(#{name},#{ms},#{tid})
+	</insert>
+	<!-- 进行回显 -->
+	<select id="show" resultType="botany">
+	select *from botany where id=#{id}
+	</select>
+	<!-- 进行修改 -->
+	<update id="update" parameterType="botany">
+	update botany set name=#{name},ms=#{ms},tid=#{tid} where id=#{id}
+	</update>
+</mapper>
